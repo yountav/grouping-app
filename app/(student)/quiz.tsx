@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { questions } from "../../data/questions";
+import { router, useLocalSearchParams } from "expo-router";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
 
 export default function QuizScreen() {
+    const { pin, username } = useLocalSearchParams();
+    const sessionCode = Array.isArray(pin) ? pin[0] : pin;
+    const studentName = Array.isArray(username) ? username[0] : username;
+
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState({});
     const question = questions[currentQuestion];
 
-    const selectAnswer = (value: number) => {
+    const selectAnswer = async (value: number) => {
         const updatedAnswers = {
             ...answers,
             [question.id]: value
@@ -19,6 +26,19 @@ export default function QuizScreen() {
         } 
         else {
             console.log("Quiz finished!", updatedAnswers);
+            try {
+                await updateDoc(doc(db, "sessions", sessionCode, "students", studentName),
+                {
+                    finished: true,
+                    answers: updatedAnswers
+                });
+                router.push({
+                    pathname: "/(student)/waiting_screen",
+                    params: { pin: sessionCode, username: studentName }
+                });
+            } catch (error) {
+                console.log("Error saving results: ", error);
+            }
         }
     };
 

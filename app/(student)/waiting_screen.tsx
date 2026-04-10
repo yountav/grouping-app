@@ -27,12 +27,12 @@ export default function WaitingScreen() {
                         params: { pin: sessionCode, username }
                     });
                 }
-                // if (data?.status === "groups") {
-                //     router.push({
-                //         pathname: "/(student)/groups",
-                //         params: {pin: sessionCode, username }
-                //     });
-                // }
+                if (data?.status === "groups") {
+                    router.push({
+                        pathname: "/(student)/groups",
+                        params: {pin: sessionCode, username }
+                    });
+                }
             }
         );
         return unsub;

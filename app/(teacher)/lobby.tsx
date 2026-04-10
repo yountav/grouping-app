@@ -41,7 +41,8 @@ export default function LobbyScreen() {
         
         try {
             await updateDoc(doc(db, "sessions", sessionCode), {
-                groups: generatedGroups
+                groups: generatedGroups,
+                status: "groups"
             });
             console.log("Generated Groups:", generatedGroups);
         } catch (error) {
