@@ -4,7 +4,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 export default function Home() {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Grouping App</Text>
+            <Text style={styles.title}>SkillSync</Text>
+            <Text style={styles.subtitle}>Smart Student Grouping</Text>
             <Pressable style={styles.button} onPress={() => router.push("/(teacher)")}>
                 <Text style={styles.buttonText}>I'm a Teacher</Text>
             </Pressable>
@@ -29,6 +30,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 36,
     },
+    subtitle: {
+        color: '#6D4DFF',
+        fontSize: 11,
+        letterSpacing: 1.2,
+        opacity: 0.6,
+        marginBottom: 24
+    },
     text: {
         color: '#FCCB1A',
         fontSize: 20,
@@ -42,10 +50,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     button: {
-        backgroundColor: '#3214B8',
-        padding: 15,
-        marginBottom: 20,
-        borderRadius: 8,
+        width: '80%',
+        borderWidth: 1.5,
+        borderColor: '#3214B8',
+        borderRadius: 12,
+        padding: 14,
+        alignItems: 'center',
+        marginBottom: 10
     },
     buttonText: {
         color: '#FBCA17',

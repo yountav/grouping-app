@@ -44,6 +44,9 @@ export default function QuizScreen() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.progressBar}>
+                <View style={[styles.progressFill, {width: `${((currentQuestion+1)/questions.length)*100}%`}]}/>
+            </View>
             <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
             <Text style={styles.questionText}>{question.text}</Text>
 
@@ -112,4 +115,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Droid Sans'
     },
+    progressBar: {
+        width: '100%',
+        height: 4,
+        backgroundColor: '#1a0f4a',
+        borderRadius: 2,
+        marginBottom: 20
+    },
+    progressFill: {
+        height: 4,
+        backgroundColor: '#6D4DFF',
+        borderRadius: 2
+    }
 });

@@ -62,14 +62,20 @@ export default function LobbyScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Lobby</Text>
-            <Text style={styles.pin}>Class Pin: {code}</Text>
+            <View style={styles.pinCard}>
+                <Text style={styles.title}>Lobby</Text>
+                <Text style={styles.pinLabel}>Class Pin</Text>
+                <Text style={styles.pin}>{code}</Text>
+            </View>
             <Text style={styles.text}>Students Joined:</Text>
 
             {students.map((student, index) => (
-                <Text key={index} style={styles.text}>
-                    {student.username}
-                </Text>
+                <View key={index} style={styles.studentLayout}>
+                    <View style={styles.studentAvatar}>
+                        <Text style={styles.avatarText}>{student.username.slice(0,2).toUpperCase()}</Text>
+                    </View>
+                    <Text style={styles.student}>{student.username}</Text>
+                </View>
             ))}
 
             <Pressable style={styles.button} onPress={startQuiz}>
@@ -102,6 +108,49 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         letterSpacing: 8,
         fontWeight: 'bold',
+    },
+    pinCard: {
+        backgroundColor: '#1a0f4a',
+        borderRadius: 16,
+        padding: 20,
+        width: '100%',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#2a1860',
+        marginBottom:20
+    },
+    pinLabel: {
+        color: '#6D4DFF',
+        fontSize: 11,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        opacity: 0.7,
+        marginBottom: 8
+    },
+    studentLayout: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#1a0f4a',
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 8,
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#2a1860',
+        gap: 10
+    },
+    studentAvatar: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: '#3214B8',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    avatarText: {
+        color: '#FBCA17',
+        fontSize: 11,
+        fontWeight: '700'
     },
     text: {
         color: '#FCCB1A',
