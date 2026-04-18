@@ -1,8 +1,8 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 import { generateGroups } from "../../utils/groupingAlgorithm";
@@ -36,14 +36,24 @@ export default function LobbyScreen() {
     }, [sessionCode]);
 
     const generateGroupsFunction = async () => {
-        const generatedGroups = generateGroups(students, 4);
-        setGroups(generatedGroups);
-        
         try {
+            const snapshot = await getDocs(
+                collection(db, "sessions", sessionCode, "students")
+            );
+            const studentList = snapshot.docs.map(doc => ({
+                username: doc.id,
+                ...doc.data()
+            }));
+            const generatedGroups = generateGroups(studentList, 4);
+
             await updateDoc(doc(db, "sessions", sessionCode), {
                 groups: generatedGroups,
                 status: "groups"
             });
+            router.push({
+                pathname: "/(teacher)/groups",
+                params: { pin: sessionCode }
+            })
             console.log("Generated Groups:", generatedGroups);
         } catch (error) {
             console.log("Error saving groups: ", error);

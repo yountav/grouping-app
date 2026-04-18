@@ -17,6 +17,10 @@ export default function JoinScreen()
                 joinedAt: Date.now(),
                 finished: false
             });
+            router.replace({
+                pathname: "/(student)/waiting_screen",
+                params: { pin, username }
+            })
             console.log("Student joined!");
         } catch (error) {
             console.log("Error: ", error);

@@ -1,9 +1,9 @@
+import { db } from "@/firebaseConfig";
+import { router, useLocalSearchParams } from "expo-router";
+import { doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { questions } from "../../data/questions";
-import { router, useLocalSearchParams } from "expo-router";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
 
 export default function QuizScreen() {
     const { pin, username } = useLocalSearchParams();
@@ -32,7 +32,7 @@ export default function QuizScreen() {
                     finished: true,
                     answers: updatedAnswers
                 });
-                router.push({
+                router.replace({
                     pathname: "/(student)/waiting_screen",
                     params: { pin: sessionCode, username: studentName }
                 });

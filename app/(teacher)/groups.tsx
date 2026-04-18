@@ -4,11 +4,15 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+type Student = {
+    username: string;
+}
+
 export default function GroupScreen() {
-    const { username, pin } = useLocalSearchParams();
+    const { pin } = useLocalSearchParams();
     const sessionCode = Array.isArray(pin) ? pin[0] : pin;
-    const studentName = Array.isArray(username) ? username[0] : username;
-    const [myGroup, setMyGroup] = useState<any[]>([]);
+    // const studentName = Array.isArray(username) ? username[0] : username;
+    const [groups, setGroups] = useState<Student[][]>([]);
 
     useEffect(() => {
         if (!sessionCode) return;
@@ -18,29 +22,35 @@ export default function GroupScreen() {
             (snapshot) => {
                 const data = snapshot.data();
                 if (!data?.groups) return;
+                setGroups(data.groups);
 
-                const groups = data.groups;
-                for (let group of groups)
-                {
-                    const found = group.find(
-                        (student:any) => student.username === studentName
-                    );
-                    if (found)
-                    {
-                        setMyGroup(group);
-                        break;
-                    }
-                }
+                // const groups = data.groups;
+                // for (let group of groups)
+                // {
+                //     const found = group.find(
+                //         (student:any) => student.username === studentName
+                //     );
+                //     if (found)
+                //     {
+                //         setMyGroup(group);
+                //         break;
+                //     }
+                // }
             }
         );
         return unsub;
-    }, [sessionCode, studentName]);
+    }, [sessionCode]);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Your Group</Text>
-            {myGroup.map((student, index) => (
-                <Text key={index} style={styles.student}>{student.username}</Text>
+            <Text style={styles.title}>Groups</Text>
+            {groups.map((group, groupIndex) => (
+                <View key={groupIndex} style={styles.groupBox}>
+                    <Text style={styles.group}>Group {groupIndex + 1}</Text>
+                    {group.map((student, i) => (
+                        <Text key={i} style={styles.student}>{student.username}</Text>
+                    ))}
+                </View>
             ))}
         </View>
     );
@@ -58,6 +68,19 @@ const styles = StyleSheet.create({
         fontSize: 36,
         fontWeight: 'bold',
         marginBottom: 36,
+    },
+    group: {
+        color: '#6D4DFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8
+    },
+    groupBox: {
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#6D4DFF',
+        padding: 12,
+        marginBottom: 18
     },
     student: {
         color: '#FBCA17',

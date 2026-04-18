@@ -18,19 +18,19 @@ export default function WaitingScreen() {
                 const data = snapshot.data();
                 if (!data) return;
 
-                setStatus(data.status);
+                // setStatus(data.status);
 
                 if (data.status === "quiz")
                 {
-                    router.push({
+                    router.replace({
                         pathname: "/(student)/quiz",
                         params: { pin: sessionCode, username }
                     });
                 }
-                if (data?.status === "groups") {
-                    router.push({
+                if (data.status === "groups") {
+                    router.replace({
                         pathname: "/(student)/groups",
-                        params: {pin: sessionCode, username }
+                        params: { pin: sessionCode, username }
                     });
                 }
             }
@@ -41,6 +41,7 @@ export default function WaitingScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Waiting Room</Text>
+            <Text style={styles.text}>Waiting for the teacher...</Text>
         </View>
     )
 }
