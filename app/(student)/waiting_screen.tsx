@@ -1,6 +1,6 @@
 import { db } from "@/firebaseConfig";
 import { router, useLocalSearchParams } from "expo-router";
-import { doc, onSnapshot } from "firebase/firestore";
+import { getDoc, doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -8,26 +8,37 @@ export default function WaitingScreen() {
     const { pin, username } = useLocalSearchParams();
     const sessionCode = Array.isArray(pin) ? pin[0] : pin;
     const [status, setStatus] = useState("lobby");
+    const [currentScreen, setCurrentScreen] = useState("");
 
     useEffect(() => {
-        if (!sessionCode) return;
+        if (!sessionCode || !username) return;
 
-        const unsub = onSnapshot(
-            doc(db, "sessions", sessionCode),
-            (snapshot) => {
+        const sessionRef = doc(db, "sessions", sessionCode);
+        const studentRef = doc(db, "sessions", sessionCode, "students", username);
+
+        const unsub = onSnapshot(sessionRef, async (snapshot) => {
+            // doc(db, "sessions", sessionCode),
+            // (snapshot) => {
                 const data = snapshot.data();
                 if (!data) return;
 
+                const studentSnapshot = await getDoc(studentRef);
+                const studentData = studentSnapshot.data();
+                const isFinished = studentData?.finished;
+
                 // setStatus(data.status);
 
-                if (data.status === "quiz")
+                if (data.status === "quiz" && !isFinished)
                 {
+                    // setCurrentScreen("quiz");
                     router.replace({
                         pathname: "/(student)/quiz",
                         params: { pin: sessionCode, username }
                     });
                 }
-                if (data.status === "groups") {
+                if (data.status === "groups") 
+                {
+                    // setCurrentScreen("groups");
                     router.replace({
                         pathname: "/(student)/groups",
                         params: { pin: sessionCode, username }
@@ -36,7 +47,7 @@ export default function WaitingScreen() {
             }
         );
         return unsub;
-    }, [sessionCode]);
+    }, [sessionCode, username]);
 
     return (
         <View style={styles.container}>
