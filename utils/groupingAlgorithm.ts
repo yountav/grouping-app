@@ -63,5 +63,8 @@ export function generateGroups(students: {username: string, answers: Answers}[],
         const col = row % 2 == 0 ? i % numGroups : numGroups - 1 - (i % numGroups);
         groups[col].push(student);
     });
-    return groups;
+
+    return groups.map(group =>
+        group.map(s => ({username: s.username}))
+    );
 }

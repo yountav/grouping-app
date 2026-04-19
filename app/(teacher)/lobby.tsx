@@ -9,6 +9,7 @@ import { generateGroups } from "../../utils/groupingAlgorithm";
 
 type Student = {
     username: string;
+    finished?: boolean;
 }
 
 export default function LobbyScreen() {
@@ -16,12 +17,8 @@ export default function LobbyScreen() {
     const sessionCode = Array.isArray(code) ? code[0] : code;
     const [students, setStudents] = useState<Student[]>([]);
     const [groups, setGroups] = useState<Student[][]>([]);
+    const allFinished = students.length > 0 && students.every(s => s.finished);
 
-    const startQuiz = async () => {
-        await updateDoc(doc(db, "sessions", sessionCode), {
-            status: "quiz"
-        });
-    };
 
     useEffect(() => {
         if (!sessionCode) return;
@@ -35,26 +32,35 @@ export default function LobbyScreen() {
         return unsub;
     }, [sessionCode]);
 
+    const startQuiz = async () => {
+        await updateDoc(doc(db, "sessions", sessionCode), {
+            status: "quiz"
+        });
+    };
+
     const generateGroupsFunction = async () => {
         try {
             const snapshot = await getDocs(
                 collection(db, "sessions", sessionCode, "students")
             );
+
             const studentList = snapshot.docs.map(doc => ({
                 username: doc.id,
                 ...doc.data()
             }));
-            const generatedGroups = generateGroups(studentList, 4);
+
+            const generatedGroups = generateGroups(studentList as any, 4);
 
             await updateDoc(doc(db, "sessions", sessionCode), {
                 groups: generatedGroups,
                 status: "groups"
             });
+            console.log("Generated Groups:", generatedGroups);
+
             router.push({
                 pathname: "/(teacher)/groups",
                 params: { pin: sessionCode }
             })
-            console.log("Generated Groups:", generatedGroups);
         } catch (error) {
             console.log("Error saving groups: ", error);
         }
@@ -67,6 +73,7 @@ export default function LobbyScreen() {
                 <Text style={styles.pinLabel}>Class Pin</Text>
                 <Text style={styles.pin}>{code}</Text>
             </View>
+
             <Text style={styles.text}>Students Joined:</Text>
 
             {students.map((student, index) => (
@@ -82,8 +89,8 @@ export default function LobbyScreen() {
                 <Text style={styles.buttonText}>Start Quiz</Text>
             </Pressable>
 
-            <Pressable style={styles.button} onPress={generateGroupsFunction}>
-                <Text style={styles.buttonText}>Generate Groups</Text>
+            <Pressable style={[styles.button, !allFinished && styles.buttonDisabled]} onPress={generateGroupsFunction} disabled={!allFinished}>
+                <Text style={styles.buttonText}>{allFinished ? "Generate Groups" : `Waiting... (${students.filter(s => s.finished).length}/${students.length})`}</Text>
             </Pressable>
         </View>
     );
@@ -151,6 +158,10 @@ const styles = StyleSheet.create({
         color: '#FBCA17',
         fontSize: 11,
         fontWeight: '700'
+    },
+    buttonDisabled: {
+        backgroundColor: '#1a0f4a',
+        opacity: 0.6
     },
     text: {
         color: '#FCCB1A',
