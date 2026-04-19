@@ -21,8 +21,8 @@ function computeScores(answers: Answers): Record<string, number>
 
         const value = question.reversed ? (6 - rawScore) : rawScore;
 
-        traitTotals[question.trait] = (traitTotals[question.trait] ?? 0);
-        traitCounts[question.trait] = (traitCounts[question.trait] ?? 0);
+        traitTotals[question.trait] = (traitTotals[question.trait] ?? 0) + value;
+        traitCounts[question.trait] = (traitCounts[question.trait] ?? 0) + 1;
     }
 
     const scores: Record<string, number> = {};
@@ -40,7 +40,9 @@ function compositeScore(scores: Record<string, number>) : number
         leadership: 0.30,
         skill: 0.30,
         organization: 0.20,
-        extroversion: 0.10
+        extroversion: 0.10,
+        stress: 0.05,
+        creativity: 0.05
     };
     return Object.entries(weights).reduce((sum, [trait, w]) => {
         return sum + (scores[trait] ?? 0) * w;

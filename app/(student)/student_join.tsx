@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { router } from "expo-router";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 export default function JoinScreen()
@@ -28,41 +28,79 @@ export default function JoinScreen()
     };
 
     useEffect(() => {
-        if (!pin) return;
+        if (!pin || !username) return;
 
         const unsub = onSnapshot(
             doc(db, "sessions", pin),
-            (snapshot) => {
+            async (snapshot) => {
                 const data = snapshot.data();
-                if (data?.groups)
+                if (!data) return;
+
+                if (data.groups)
                 {
-                    router.push({
+                    router.replace({
                         pathname: "/(student)/groups",
-                        params: { username, pin}
+                        params: { username, pin }
                     });
+                    return;
                 }
-            }
-        );
-        return unsub;
-    }, [pin, username])
-
-    useEffect(() => {
-        if (!pin) return;
-        
-        const unsub = onSnapshot(
-            doc(db, "sessions", pin),
-            (snapshot) => {
-                const data = snapshot.data();
-                if (data?.status === "quiz") {
-                    router.push({
-                        pathname: "/(student)/quiz",
-                        params: { username: username, pin: pin }
-                    });
+                if (data.status === "quiz")
+                {
+                    const studentSnapshot = await getDoc(doc(db, "sessions", pin, "students", username));
+                    if (!studentSnapshot.data()?.finished)
+                    {
+                        router.replace({
+                            pathname: "/(student)/quiz",
+                            params: { username, pin }
+                        });
+                    }
                 }
             }
         );
         return unsub;
     }, [pin, username]);
+
+    // useEffect(() => {
+    //     if (!pin) return;
+
+    //     const unsub = onSnapshot(
+    //         doc(db, "sessions", pin),
+    //         (snapshot) => {
+    //             const data = snapshot.data();
+    //             if (data?.groups)
+    //             {
+    //                 router.push({
+    //                     pathname: "/(student)/groups",
+    //                     params: { username, pin}
+    //                 });
+    //             }
+    //         }
+    //     );
+    //     return unsub;
+    // }, [pin, username])
+
+    // useEffect(() => {
+    //     if (!pin) return;
+        
+    //     const unsub = onSnapshot(
+    //         doc(db, "sessions", pin),
+    //         async (snapshot) => {
+    //             const data = snapshot.data();
+    //             if (data?.status === "quiz") {
+    //                 const studentRef = doc(db, "sessions", pin, "students", username);
+    //                 const studentSnapshot = await getDoc(studentRef);
+    //                 if (!studentSnapshot.data()?.finished)
+    //                 {
+    //                     router.replace({
+    //                         pathname: "/(student)/quiz",
+    //                         params: { username: username, pin: pin }
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     );
+    //     return unsub;
+    // }, [pin, username]);
 
     return (
         <View style={styles.container}>

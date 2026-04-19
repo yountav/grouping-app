@@ -17,7 +17,7 @@ export default function LobbyScreen() {
     const sessionCode = Array.isArray(code) ? code[0] : code;
     const [students, setStudents] = useState<Student[]>([]);
     const [groups, setGroups] = useState<Student[][]>([]);
-    const allFinished = students.length > 0 && students.every(s => s.finished);
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
@@ -27,19 +27,31 @@ export default function LobbyScreen() {
             (snapshot) => {
                 const studentList = snapshot.docs.map(doc => doc.data() as Student);
                 setStudents(studentList);
+                setLoading(false);
             }
         );
         return unsub;
     }, [sessionCode]);
 
+    const allFinished = students.length > 0 && students.every(s => s.finished === true);
+
     const startQuiz = async () => {
-        await updateDoc(doc(db, "sessions", sessionCode), {
-            status: "quiz"
-        });
+        if (!sessionCode) return;
+        try {
+            await updateDoc(doc(db, "sessions", sessionCode), {
+                status: "quiz",
+                groups: null
+            });
+        } catch (error)
+        {
+            console.log("Error starting quiz", error);
+        }
     };
 
     const generateGroupsFunction = async () => {
+        if (!sessionCode || students.length === 0) return;
         try {
+            console.log("Generating groups with:", students);
             const snapshot = await getDocs(
                 collection(db, "sessions", sessionCode, "students")
             );
@@ -48,7 +60,6 @@ export default function LobbyScreen() {
                 username: doc.id,
                 ...doc.data()
             }));
-
             const generatedGroups = generateGroups(studentList as any, 4);
 
             await updateDoc(doc(db, "sessions", sessionCode), {
@@ -57,7 +68,7 @@ export default function LobbyScreen() {
             });
             console.log("Generated Groups:", generatedGroups);
 
-            router.push({
+            router.replace({
                 pathname: "/(teacher)/groups",
                 params: { pin: sessionCode }
             })
