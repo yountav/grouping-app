@@ -6,10 +6,10 @@ export default function Home() {
         <View style={styles.container}>
             <Text style={styles.title}>SkillSync</Text>
             <Text style={styles.subtitle}>Smart Student Grouping</Text>
-            <Pressable style={styles.button} onPress={() => router.push("/(teacher)")}>
+            <Pressable style={styles.button} onPress={() => router.replace("/(teacher)")}>
                 <Text style={styles.buttonText}>I'm a Teacher</Text>
             </Pressable>
-            <Pressable style={styles.button} onPress={() => router.push("/(student)/student_join")}>
+            <Pressable style={styles.button} onPress={() => router.replace("/(student)/student_join")}>
                 <Text style={styles.buttonText}>I'm a Student</Text>
             </Pressable>
         </View>

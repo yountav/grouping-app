@@ -23,11 +23,12 @@ export default function GroupScreen() {
                 const data = snapshot.data();
                 if (!data?.groups) return;
 
-                const groups = data.groups;
-                for (let group of groups)
+                const groupsMap = data.groups;
+                const groupsArray: Student[][] = Object.keys(groupsMap).sort().map(key => groupsMap[key]);
+                for (let group of groupsArray)
                 {
                     const found = group.find(
-                        (student:Student) => student.username === studentName
+                        (student: Student) => student.username === studentName
                     );
                     if (found)
                     {

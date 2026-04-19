@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { router } from "expo-router";
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 export default function JoinScreen()
 {
     const [username, setUsername] = useState('');
     const [pin, setPin] = useState('');
+    const [error, setError] = useState('');
 
     const joinSession = async () => {
+        if (!username.trim() || !pin.trim())
+        {
+            setError('Please enter both a name and a pin.')
+            return;
+        }
         try {
             await setDoc(doc(db, "sessions", pin, "students", username), {
                 username: username,
@@ -24,41 +30,42 @@ export default function JoinScreen()
             console.log("Student joined!");
         } catch (error) {
             console.log("Error: ", error);
+            setError('Could not join session, check your pin and try again.');
         }
     };
 
-    useEffect(() => {
-        if (!pin || !username) return;
+    // useEffect(() => {
+    //     if (!pin || !username) return;
 
-        const unsub = onSnapshot(
-            doc(db, "sessions", pin),
-            async (snapshot) => {
-                const data = snapshot.data();
-                if (!data) return;
+    //     const unsub = onSnapshot(
+    //         doc(db, "sessions", pin),
+    //         async (snapshot) => {
+    //             const data = snapshot.data();
+    //             if (!data) return;
 
-                if (data.groups)
-                {
-                    router.replace({
-                        pathname: "/(student)/groups",
-                        params: { username, pin }
-                    });
-                    return;
-                }
-                if (data.status === "quiz")
-                {
-                    const studentSnapshot = await getDoc(doc(db, "sessions", pin, "students", username));
-                    if (!studentSnapshot.data()?.finished)
-                    {
-                        router.replace({
-                            pathname: "/(student)/quiz",
-                            params: { username, pin }
-                        });
-                    }
-                }
-            }
-        );
-        return unsub;
-    }, [pin, username]);
+    //             if (data.groups)
+    //             {
+    //                 router.replace({
+    //                     pathname: "/(student)/groups",
+    //                     params: { username, pin }
+    //                 });
+    //                 return;
+    //             }
+    //             if (data.status === "quiz")
+    //             {
+    //                 const studentSnapshot = await getDoc(doc(db, "sessions", pin, "students", username));
+    //                 if (!studentSnapshot.data()?.finished)
+    //                 {
+    //                     router.replace({
+    //                         pathname: "/(student)/quiz",
+    //                         params: { username, pin }
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     );
+    //     return unsub;
+    // }, [pin, username]);
 
     // useEffect(() => {
     //     if (!pin) return;
@@ -119,7 +126,7 @@ export default function JoinScreen()
                 onChangeText={setPin}
                 style={styles.input}
             />
-
+            {error ? <Text style={styles.text}>{error}</Text> : null}
             <Pressable style={styles.button} onPress={joinSession}>
                 <Text style={styles.buttonText}>Join Session</Text>
             </Pressable>

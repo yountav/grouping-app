@@ -1,8 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
+import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
-import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 import { generateGroups } from "../../utils/groupingAlgorithm";
@@ -33,7 +32,7 @@ export default function LobbyScreen() {
         return unsub;
     }, [sessionCode]);
 
-    const allFinished = students.length > 0 && students.every(s => s.finished === true);
+    const allFinished = students.length > 0 && students.every(s => !!s.finished);
 
     const startQuiz = async () => {
         if (!sessionCode) return;
@@ -48,33 +47,85 @@ export default function LobbyScreen() {
         }
     };
 
-    const generateGroupsFunction = async () => {
-        if (!sessionCode || students.length === 0) return;
-        try {
-            console.log("Generating groups with:", students);
-            const snapshot = await getDocs(
-                collection(db, "sessions", sessionCode, "students")
-            );
+    const generateGroupsFunction = () => {
+        setTimeout(async () => {
+            if (!sessionCode || students.length === 0) return;
+            try {
+                const snapshot = await getDocs(
+                    collection(db, "sessions", sessionCode, "students")
+                );
 
-            const studentList = snapshot.docs.map(doc => ({
-                username: doc.id,
-                ...doc.data()
-            }));
-            const generatedGroups = generateGroups(studentList as any, 4);
+                const studentList = snapshot.docs.map(doc => ({
+                    username: doc.id,
+                    ...doc.data()
+                }));
+                const generatedGroups = generateGroups(studentList as any, 4);
 
-            await updateDoc(doc(db, "sessions", sessionCode), {
-                groups: generatedGroups,
-                status: "groups"
-            });
-            console.log("Generated Groups:", generatedGroups);
+                const groupsMap: Record<string, { username: string }[]> = {};
+                generatedGroups.forEach((group, index) => {
+                    groupsMap[`group_${index}`] = group;
+                })
 
-            router.replace({
-                pathname: "/(teacher)/groups",
-                params: { pin: sessionCode }
-            })
-        } catch (error) {
+                await updateDoc(doc(db, "sessions", sessionCode), {
+                    groups: groupsMap,
+                    status: "groups"
+                });
+
+                router.replace({
+                    pathname: "/(teacher)/groups",
+                    params: { pin: sessionCode }
+                })
+            } catch (error) {
             console.log("Error saving groups: ", error);
-        }
+            }
+        }, 0);
+    };
+    
+
+    // const generateGroupsFunction = () => {
+    //     setTimeout(async () => {
+    //         alert("step 1 - sessionCode: " + sessionCode + " students: " + students.length);
+            
+    //         if (!sessionCode || students.length === 0) {
+    //             alert("EARLY RETURN");
+    //             return;
+    //         }
+    
+    //         try {
+    //             alert("step 2 - about to getDocs");
+    //             const snapshot = await getDocs(
+    //                 collection(db, "sessions", sessionCode, "students")
+    //             );
+    //             alert("step 3 - got " + snapshot.docs.length + " docs");
+    
+    //             const studentList = snapshot.docs.map(doc => ({
+    //                 username: doc.id,
+    //                 ...doc.data()
+    //             }));
+    
+    //             const generatedGroups = generateGroups(studentList as any, 4);
+    //             alert("step 4 - groups: " + JSON.stringify(generatedGroups));
+    
+    //             const groupsMap: Record<string, {username:string}[]> = {};
+    // generatedGroups.forEach((group, index) =>{
+    //     groupsMap[`group_${index}`] = group;
+    // });
+    //             await updateDoc(doc(db, "sessions", sessionCode), {
+    //                 groups: groupsMap,
+    //                 status: "groups"
+    //             });
+    
+    //             router.replace({
+    //                 pathname: "/(teacher)/groups",
+    //                 params: { pin: sessionCode }
+    //             });
+    //         } catch (error) {
+    //             alert("ERROR: " + error);
+    //         }
+    //     }, 0);
+    // };
+    const handleGenerateGroups = () => {
+        generateGroupsFunction();
     };
 
     return (
@@ -100,8 +151,8 @@ export default function LobbyScreen() {
                 <Text style={styles.buttonText}>Start Quiz</Text>
             </Pressable>
 
-            <Pressable style={[styles.button, !allFinished && styles.buttonDisabled]} onPress={generateGroupsFunction} disabled={!allFinished}>
-                <Text style={styles.buttonText}>{allFinished ? "Generate Groups" : `Waiting... (${students.filter(s => s.finished).length}/${students.length})`}</Text>
+            <Pressable style={styles.button} onPress={handleGenerateGroups}>
+                <Text style={styles.buttonText}>Generate Groups</Text>
             </Pressable>
         </View>
     );

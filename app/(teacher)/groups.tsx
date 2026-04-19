@@ -22,20 +22,10 @@ export default function GroupScreen() {
             (snapshot) => {
                 const data = snapshot.data();
                 if (!data?.groups) return;
-                setGroups(data.groups);
-
-                // const groups = data.groups;
-                // for (let group of groups)
-                // {
-                //     const found = group.find(
-                //         (student:any) => student.username === studentName
-                //     );
-                //     if (found)
-                //     {
-                //         setMyGroup(group);
-                //         break;
-                //     }
-                // }
+                
+                const groupsMap = data.groups;
+                const groupsArray = Object.keys(groupsMap).sort().map(key => groupsMap[key]);
+                setGroups(groupsArray);
             }
         );
         return unsub;

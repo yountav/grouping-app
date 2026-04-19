@@ -16,7 +16,7 @@ export default function HomeSceen()
                 status: "lobby"
             });
 
-            router.push({
+            router.replace({
                 pathname: "/(teacher)/lobby",
                 params: { code: gameCode }
             });
