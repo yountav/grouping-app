@@ -67,23 +67,23 @@ export default function JoinScreen()
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Join Session</Text>
-            <Text style={styles.text}>Player Name</Text>
+            <Text style={styles.text}>Your Name</Text>
             <TextInput 
-                placeholder='Player Name'
+                placeholder='Username'
                 value={username}
                 onChangeText={setUsername}
                 style={styles.input}
             />
             <Text style={styles.text}>Class Pin</Text>
             <TextInput 
-                placeholder='Class Pin'
+                placeholder='6-Digit Code'
                 value={pin}
                 onChangeText={setPin}
                 style={styles.input}
             />
 
             <Pressable style={styles.button} onPress={joinSession}>
-                <Text style={styles.buttonText}>Join</Text>
+                <Text style={styles.buttonText}>Join Session</Text>
             </Pressable>
         </View>
     );
@@ -108,13 +108,13 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     input: {
-        backgroundColor: 'white',
-        fontSize: 16,
-        marginBottom: 20,
-        borderRadius: 8,
-        width: '50%',
-        boxSizing: 'border-box',
-        textAlign: 'center',
+        width: '80%',
+        borderWidth: 1.5,
+        borderColor: '#3214B8',
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 10,
+        color: '#6D4DFF'
     },
     button: {
         backgroundColor: '#3214B8',

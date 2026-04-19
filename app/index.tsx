@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         color: '#6D4DFF',
-        fontSize: 11,
+        fontSize: 20,
         letterSpacing: 1.2,
         opacity: 0.6,
         marginBottom: 24

@@ -27,9 +27,11 @@ export default function HomeSceen()
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Grouping App</Text>
-            <Text style={styles.text}>Class Pin:</Text>
-            <Text style={styles.pin}>{gameCode}</Text>
+            <Text style={styles.title}>SkillSync</Text>
+            <View style={styles.pinCard}>
+                <Text style={styles.pinLabel}>Class Pin</Text>
+                <Text style={styles.pin}>{gameCode}</Text>
+            </View>
 
             <Pressable style={styles.button} onPress={createSession}>
                 <Text style={styles.buttonText}>Start</Text>
@@ -63,6 +65,24 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         letterSpacing: 8,
         fontWeight: 'bold',
+    },
+    pinCard: {
+        backgroundColor: '#1a0f4a',
+        borderRadius: 16,
+        padding: 20,
+        width: '80%',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#2a1860',
+        marginBottom:20
+    },
+    pinLabel: {
+        color: '#6D4DFF',
+        fontSize: 11,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        opacity: 0.7,
+        marginBottom: 8
     },
     button: {
         backgroundColor: '#3214B8',

@@ -62,8 +62,8 @@ export default function LobbyScreen() {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Lobby</Text>
             <View style={styles.pinCard}>
-                <Text style={styles.title}>Lobby</Text>
                 <Text style={styles.pinLabel}>Class Pin</Text>
                 <Text style={styles.pin}>{code}</Text>
             </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#1a0f4a',
         borderRadius: 16,
         padding: 20,
-        width: '100%',
+        width: '50%',
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#2a1860',
