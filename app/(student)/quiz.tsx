@@ -47,7 +47,7 @@ export default function QuizScreen() {
             <View style={styles.progressBar}>
                 <View style={[styles.progressFill, {width: `${((currentQuestion+1)/questions.length)*100}%`}]}/>
             </View>
-            <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
+            {/* <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
             <Text style={styles.questionText}>{question.text}</Text>
 
             <View style={styles.answers}>
@@ -70,6 +70,17 @@ export default function QuizScreen() {
                 <Pressable style={styles.button} onPress={() => selectAnswer(5)}>
                     <Text style={styles.buttonText}>Strongly Agree</Text>
                 </Pressable>
+            </View> */}
+            <View style={styles.scaleRow}>
+                {[1,2,3,4,5].map(v => (
+                    <Pressable key={v} style={styles.scaleButton} onPress={() => selectAnswer(v)}>
+                        <Text style={styles.scaleBtnText}>{v}</Text>
+                    </Pressable>
+                ))}
+            </View>
+            <View style={styles.scaleLabel}>
+                <Text style={styles.scaleLabelText}>Strongly Disagree</Text>
+                <Text style={styles.scaleLabelText}>Strongly Agree</Text>
             </View>
 
         </View>
@@ -126,5 +137,35 @@ const styles = StyleSheet.create({
         height: 4,
         backgroundColor: '#6D4DFF',
         borderRadius: 2
+    },
+    scaleRow: {
+        flexDirection: 'row',
+        gap: 10,
+        width: '100%',
+        marginBottom: 8
+    },
+    scaleButton: {
+        flex: 1,
+        backgroundColor: '#1a0f4a',
+        borderRadius: 8,
+        padding: 16,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#2a1860'
+    },
+    scaleBtnText: {
+        color: '#FBCA17',
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    scaleLabel: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
+    scaleLabelText: {
+        color: '#6D4DFF',
+        fontSize: 10,
+        opacity: 0.6
     }
 });
