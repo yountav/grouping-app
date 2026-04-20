@@ -47,10 +47,10 @@ export default function QuizScreen() {
             <View style={styles.progressBar}>
                 <View style={[styles.progressFill, {width: `${((currentQuestion+1)/questions.length)*100}%`}]}/>
             </View>
-            {/* <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
+            <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
             <Text style={styles.questionText}>{question.text}</Text>
 
-            <View style={styles.answers}>
+            {/* <View style={styles.answers}>
                 <Pressable style={styles.button} onPress={() => selectAnswer(1)}>
                     <Text style={styles.buttonText}>Strongly Disagree</Text>
                 </Pressable>
@@ -70,7 +70,7 @@ export default function QuizScreen() {
                 <Pressable style={styles.button} onPress={() => selectAnswer(5)}>
                     <Text style={styles.buttonText}>Strongly Agree</Text>
                 </Pressable>
-            </View> */}
+            </View> */} 
             <View style={styles.scaleRow}>
                 {[1,2,3,4,5].map(v => (
                     <Pressable key={v} style={styles.scaleButton} onPress={() => selectAnswer(v)}>
@@ -82,7 +82,6 @@ export default function QuizScreen() {
                 <Text style={styles.scaleLabelText}>Strongly Disagree</Text>
                 <Text style={styles.scaleLabelText}>Strongly Agree</Text>
             </View>
-
         </View>
     );
 }
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 16,
         alignItems: 'center',
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: '#2a1860'
     },
     scaleBtnText: {
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
     },
     scaleLabelText: {
         color: '#6D4DFF',
-        fontSize: 10,
+        fontSize: 18,
         opacity: 0.6
     }
 });
