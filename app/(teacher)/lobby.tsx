@@ -81,49 +81,6 @@ export default function LobbyScreen() {
         }, 0);
     };
     
-
-    // const generateGroupsFunction = () => {
-    //     setTimeout(async () => {
-    //         alert("step 1 - sessionCode: " + sessionCode + " students: " + students.length);
-            
-    //         if (!sessionCode || students.length === 0) {
-    //             alert("EARLY RETURN");
-    //             return;
-    //         }
-    
-    //         try {
-    //             alert("step 2 - about to getDocs");
-    //             const snapshot = await getDocs(
-    //                 collection(db, "sessions", sessionCode, "students")
-    //             );
-    //             alert("step 3 - got " + snapshot.docs.length + " docs");
-    
-    //             const studentList = snapshot.docs.map(doc => ({
-    //                 username: doc.id,
-    //                 ...doc.data()
-    //             }));
-    
-    //             const generatedGroups = generateGroups(studentList as any, 4);
-    //             alert("step 4 - groups: " + JSON.stringify(generatedGroups));
-    
-    //             const groupsMap: Record<string, {username:string}[]> = {};
-    // generatedGroups.forEach((group, index) =>{
-    //     groupsMap[`group_${index}`] = group;
-    // });
-    //             await updateDoc(doc(db, "sessions", sessionCode), {
-    //                 groups: groupsMap,
-    //                 status: "groups"
-    //             });
-    
-    //             router.replace({
-    //                 pathname: "/(teacher)/groups",
-    //                 params: { pin: sessionCode }
-    //             });
-    //         } catch (error) {
-    //             alert("ERROR: " + error);
-    //         }
-    //     }, 0);
-    // };
     const handleGenerateGroups = () => {
         generateGroupsFunction();
     };
