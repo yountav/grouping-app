@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../../firebaseConfig";
 
 import { generateGroups } from "../../utils/groupingAlgorithm";
@@ -86,7 +86,7 @@ export default function LobbyScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.title}>Lobby</Text>
             <View style={styles.pinCard}>
                 <Text style={styles.pinLabel}>Class Pin</Text>
@@ -111,7 +111,7 @@ export default function LobbyScreen() {
             <Pressable style={[styles.button, !allFinished && styles.buttonDisabled]} onPress={handleGenerateGroups} disabled={!allFinished}>
                 <Text style={styles.buttonText}>{allFinished ? "Generate Groups" : `Waiting for Students... (${students.filter((s:any) => s.finished).length}/${students.length})`}</Text>
             </Pressable>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -121,6 +121,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#110934',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    scrollContent: {
+        backgroundColor: '#110934',
+        alignItems: 'center',
+        paddingTop: 60,
+        paddingBottom: 40,
+        paddingHorizontal: 16,
+        minHeight: '100%'
     },
     title: {
         color: '#6D4DFF',
