@@ -32,7 +32,7 @@ export default function LobbyScreen() {
         return unsub;
     }, [sessionCode]);
 
-    const allFinished = students.length > 0 && students.every(s => !!s.finished);
+    const allFinished = students.length > 0 && students.every(s => s.finished);
 
     const startQuiz = async () => {
         if (!sessionCode) return;
@@ -108,8 +108,8 @@ export default function LobbyScreen() {
                 <Text style={styles.buttonText}>Start Quiz</Text>
             </Pressable>
 
-            <Pressable style={styles.button} onPress={handleGenerateGroups}>
-                <Text style={styles.buttonText}>Generate Groups</Text>
+            <Pressable style={[styles.button, !allFinished && styles.buttonDisabled]} onPress={handleGenerateGroups} disabled={!allFinished}>
+                <Text style={styles.buttonText}>{allFinished ? "Generate Groups" : `Waiting for Students... (${students.filter((s:any) => s.finished).length}/${students.length})`}</Text>
             </Pressable>
         </View>
     );
