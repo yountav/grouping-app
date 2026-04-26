@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { collection, deleteDoc, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../../firebaseConfig";
@@ -60,6 +60,9 @@ export default function LobbyScreen() {
         setTimeout(async () => {
             if (!sessionCode || students.length === 0) return;
             try {
+                const sessionSnapshot = await getDoc(doc(db, "sessions", sessionCode));
+                const weights = sessionSnapshot.data()?.weights;
+
                 const snapshot = await getDocs(
                     collection(db, "sessions", sessionCode, "students")
                 );
@@ -68,7 +71,7 @@ export default function LobbyScreen() {
                     username: doc.id,
                     ...doc.data()
                 }));
-                const generatedGroups = generateGroups(studentList as any, 4);
+                const generatedGroups = generateGroups(studentList as any, 4, weights);
 
                 const groupsMap: Record<string, { username: string }[]> = {};
                 generatedGroups.forEach((group, index) => {
@@ -85,7 +88,7 @@ export default function LobbyScreen() {
                     params: { pin: sessionCode }
                 })
             } catch (error) {
-            console.log("Error saving groups: ", error);
+                console.log("Error saving groups: ", error);
             }
         }, 0);
     };

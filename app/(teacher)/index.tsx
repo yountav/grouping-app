@@ -66,10 +66,26 @@ export default function HomeSceen()
                 <Text style={styles.pin}>{gameCode}</Text>
             </View>
 
-            <Text style={styles.sectionTitle}>Trait Weights</Text>
+            <Text style={styles.sectionTitle}>Set Trait Weights</Text>
             <Text style={styles.sectionText}>Adjust how much each trait influences grouping algorithm</Text>
 
-            <Pressable style={styles.button} onPress={createSession}>
+            <View style={styles.totalLabel}>
+                <Text style={[
+                    styles.totalText,
+                    total !== 100 && styles.totalWarning
+                ]}>Total: {total}% {total !== 100 ? `Must equal 100%` : '\u2713'}</Text>
+            </View>
+
+            {TRAITS.map(trait => (
+                <View key={trait.key} style={styles.slider}>
+                    <View style={styles.sliderHeader}>
+                        <Text style={styles.traitLabel}>{trait.label}</Text>
+                        <Text style={styles.traitValue}>{weights[trait.key]}%</Text>
+                    </View>
+                </View>
+            ))}
+
+            <Pressable style={[styles.button, total !== 100 && styles.buttonDisabled]} onPress={createSession} disabled={total !== 100}>
                 <Text style={styles.buttonText}>Start</Text>
             </Pressable>
         </ScrollView>
@@ -141,6 +157,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Droid Sans'
     },
+    buttonDisabled: {
+        backgroundColor: '#1a0f4a',
+        opacity: 0.6
+    },
     sectionTitle: {
         color: '#6D4DFF',
         fontSize: 20,
@@ -152,5 +172,42 @@ const styles = StyleSheet.create({
         fontSize: 14,
         opacity: 0.7,
         marginBottom: 16
+    },
+    totalLabel: {
+        backgroundColor: '#1a0f4a',
+        borderRadius: 8,
+        padding: 10,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '2a1860'
+    },
+    totalText: {
+        color: '#4CAF50',
+        fontSize: 14,
+        fontWeight: '700'
+    },
+    totalWarning: {
+        color: '#ff6b6b'
+    },
+    slider: {
+        width: '100%',
+        marginBottom: 20
+    },
+    sliderHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 8
+    },
+    traitLabel: {
+        color: '#F7F0D4',
+        fontSize: 14,
+        fontWeight: '600'
+    },
+    traitValue: {
+        color: '#6D4DFF',
+        fontSize: 14,
+        fontWeight: '700'
     }
 });
