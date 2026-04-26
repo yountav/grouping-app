@@ -25,6 +25,7 @@ const DEFAULT_WEIGHTS: Record<string, number> = {
 
 export default function HomeSceen()
 {
+    const [groupSize, setGroupSize] = useState(4);
     const [gameCode, setGameCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
     const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
     const total = Object.values(weights).reduce((a,b) => a + b, 0);
@@ -46,7 +47,8 @@ export default function HomeSceen()
             await setDoc(doc(db, "sessions", gameCode), {
                 createdAt: Date.now(),
                 status: "lobby",
-                weights: normWeights
+                weights: normWeights,
+                groupSize: groupSize
             });
 
             router.replace({
@@ -65,6 +67,17 @@ export default function HomeSceen()
             <View style={styles.pinCard}>
                 <Text style={styles.pinLabel}>Class Pin</Text>
                 <Text style={styles.pin}>{gameCode}</Text>
+            </View>
+            
+            <Text style={styles.sectionTitle}>Group Size</Text>
+            <View style={styles.adjustRow}>
+                <Pressable style={styles.adjustButton} onPress={() => setGroupSize(Math.max(1, groupSize - 1))}>
+                    <Text style={styles.adjustText}>-</Text>
+                </Pressable>
+                <Text style={styles.groupSize}>{groupSize} students per group</Text>
+                <Pressable style={styles.adjustButton} onPress={() => setGroupSize(groupSize + 1)}>
+                    <Text style={styles.adjustText}>+</Text>
+                </Pressable>
             </View>
 
             <Text style={styles.sectionTitle}>Set Trait Weights</Text>
@@ -230,5 +243,11 @@ const styles = StyleSheet.create({
         color: '#FBCA17',
         fontSize: 18,
         fontWeight: 'bold'
+    },
+    groupSize: {
+        color: '#F7F0D4',
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center'
     }
 });

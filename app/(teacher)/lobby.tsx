@@ -60,8 +60,11 @@ export default function LobbyScreen() {
         setTimeout(async () => {
             if (!sessionCode || students.length === 0) return;
             try {
-                const sessionSnapshot = await getDoc(doc(db, "sessions", sessionCode));
-                const weights = sessionSnapshot.data()?.weights;
+                const sessionRef = doc(db, "sessions", sessionCode);
+                const sessionSnapshot = await getDoc(sessionRef);
+                const sessionData = sessionSnapshot.data();
+                const groupSize = sessionData?.groupSize ?? 4;
+                const weights = sessionData?.weights;
 
                 const snapshot = await getDocs(
                     collection(db, "sessions", sessionCode, "students")
@@ -71,7 +74,7 @@ export default function LobbyScreen() {
                     username: doc.id,
                     ...doc.data()
                 }));
-                const generatedGroups = generateGroups(studentList as any, 4, weights);
+                const generatedGroups = generateGroups(studentList as any, groupSize, weights);
 
                 const groupsMap: Record<string, { username: string }[]> = {};
                 generatedGroups.forEach((group, index) => {
