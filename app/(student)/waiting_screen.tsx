@@ -6,13 +6,16 @@ import { StyleSheet, Text, View } from "react-native";
 
 export default function WaitingScreen() {
     const { pin, username } = useLocalSearchParams();
+    // Gets session and user info from navigation
     const sessionCode = Array.isArray(pin) ? pin[0] : pin;
     const studentName = Array.isArray(username) ? username[0] : username;
     const navigated = useRef(false);
+
     const [status, setStatus] = useState("lobby");
     const [isFinished, setIsFinished] = useState(false);
     const [currentScreen, setCurrentScreen] = useState("");
 
+    // Listens to changes in session status
     useEffect(() => {
         if (!sessionCode) return;
 
@@ -26,6 +29,7 @@ export default function WaitingScreen() {
         return unsub;
     }, [sessionCode]);
 
+    // Listens to changes in each student's doc including tracking quiz progress and detects if they're booted
     useEffect(() => {
         if (!sessionCode || !studentName) return;
 
@@ -45,9 +49,11 @@ export default function WaitingScreen() {
         return unsub;
     }, [sessionCode, studentName]);
 
+    // Navigates students based on session state
     useEffect(() => {
         if (navigated.current) return;
 
+        // Redirects to quiz when teacher starts quiz
         if (status === 'quiz' && !isFinished)
         {
             navigated.current = true;
@@ -55,6 +61,7 @@ export default function WaitingScreen() {
                 pathname: "/(student)/quiz",
                 params: { pin: sessionCode, username: studentName}
             });
+            // Redirects to grouping screen when teacher generates groups
         } else if (status === 'groups')
         {
             navigated.current = true;

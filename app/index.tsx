@@ -8,12 +8,14 @@ export default function Home() {
             <Text style={styles.title}>SkillSync</Text>
             <Text style={styles.subtitle}>Smart Student Grouping</Text>
 
+            { /* If student is removed from session, displays a message and redirects them to start */}
             {booted === "true" && (
                 <View style={styles.bootedLabel}>
                     <Text style={styles.bootedText}>You have been removed from the session.</Text>
                 </View>
             )}
 
+            {/* Navigates users based on whether they are a student or teacher and continues to navigate them accordingly */}
             <Pressable style={styles.button} onPress={() => router.replace("/(teacher)")}>
                 <Text style={styles.buttonText}>I'm a Teacher</Text>
             </Pressable>

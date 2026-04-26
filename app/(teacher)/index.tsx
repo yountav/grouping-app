@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
+// Traits used in grouping algorithm
 const TRAITS = [
     { key: 'leadership', label: 'Leadership' },
     { key: 'skill', label: 'Skill' },
@@ -14,6 +15,7 @@ const TRAITS = [
     { key: 'creativity', label: 'Creativity' }
 ];
 
+// Default weights used in grouping algorithm
 const DEFAULT_WEIGHTS: Record<string, number> = {
     leadership: 30,
     skill: 30,
@@ -25,8 +27,13 @@ const DEFAULT_WEIGHTS: Record<string, number> = {
 
 export default function HomeSceen()
 {
+    // Sets group size with a default of 4
     const [groupSize, setGroupSize] = useState(4);
+
+    // Generates random 6-digit code
     const [gameCode, setGameCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
+    
+    // Sets and updates each trait weight and ensures all totals to 100%
     const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
     const total = Object.values(weights).reduce((a,b) => a + b, 0);
     const updateWeight = (key: string, value: number) => {
@@ -36,21 +43,24 @@ export default function HomeSceen()
         }));
     };
     
+    // Creates a new session in Firestore
     const createSession = async () => {
         try {
+            // Normalizes weights to decimals from scale of 0 to 1
             const normWeights: Record<string, number> = {};
             for (const key in weights)
             {
                 normWeights[key] = weights[key] / 100;
             }
 
+            // Creates session document
             await setDoc(doc(db, "sessions", gameCode), {
                 createdAt: Date.now(),
                 status: "lobby",
                 weights: normWeights,
                 groupSize: groupSize
             });
-
+            // Navigates to lobby screen
             router.replace({
                 pathname: "/(teacher)/lobby",
                 params: { code: gameCode }

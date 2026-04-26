@@ -9,6 +9,7 @@ type StudentWScores = {
     compositeScore: number;
 }
 
+// Converts student answers into trait-based scores
 function computeScores(answers: Answers): Record<string, number>
 {
     const traitTotals: Record<string, number> = {};
@@ -19,12 +20,14 @@ function computeScores(answers: Answers): Record<string, number>
         const rawScore = answers[question.id];
         if (rawScore == undefined) continue;
 
+        // Reverses scores to handle negatve phrasing
         const value = question.reversed ? (6 - rawScore) : rawScore;
 
         traitTotals[question.trait] = (traitTotals[question.trait] ?? 0) + value;
         traitCounts[question.trait] = (traitCounts[question.trait] ?? 0) + 1;
     }
 
+    // Converts totals into normalized scores on a scale from 0 to 1
     const scores: Record<string, number> = {};
     for (const trait in traitTotals)
     {
@@ -34,8 +37,10 @@ function computeScores(answers: Answers): Record<string, number>
     return scores;
 }
 
+// Function to generate balanced groups based on trait weights
 export function generateGroups(students: {username: string, answers: Answers}[], groupSize: number, weights?: Record<string, number>) : {username: string} [][]
 {
+    // Default trait weights
     const defaultWeights: Record<string, number> = {
         leadership: 0.30,
         skill: 0.30,
@@ -46,6 +51,7 @@ export function generateGroups(students: {username: string, answers: Answers}[],
     };
     const resolvedWeights = weights ?? defaultWeights;
 
+    // Computes scores and composite score for each student
     const numGroups = Math.ceil(students.length / groupSize);
     const scoredStudents: StudentWScores[] = students.map(s => {
         const scores = computeScores(s.answers);
@@ -55,8 +61,10 @@ export function generateGroups(students: {username: string, answers: Answers}[],
         return {...s, scores, compositeScore: composite};
     });
 
+    // Sorts students from highest to lowest composite score
     scoredStudents.sort((a, b) => b.compositeScore - a.compositeScore);
     
+    // Balances students strengths and weaknesses across groups
     const groups: StudentWScores[][] = Array.from({ length: numGroups }, () => []);
     scoredStudents.forEach((student, i) => {
         const row = Math.floor(i / numGroups);

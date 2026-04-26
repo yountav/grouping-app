@@ -11,6 +11,7 @@ type Student = {
     finished?: boolean;
 }
 
+// Function to manage and control student session navigation flow
 export default function LobbyScreen() {
     const { code } = useLocalSearchParams();
     const sessionCode = Array.isArray(code) ? code[0] : code;
@@ -18,7 +19,7 @@ export default function LobbyScreen() {
     const [groups, setGroups] = useState<Student[][]>([]);
     const [loading, setLoading] = useState(true);
 
-
+    // Listens for all students
     useEffect(() => {
         if (!sessionCode) return;
         const unsub = onSnapshot(
@@ -32,8 +33,10 @@ export default function LobbyScreen() {
         return unsub;
     }, [sessionCode]);
 
+    // Checks if all students in session have finished quiz
     const allFinished = students.length > 0 && students.every(s => s.finished);
 
+    // Moves session to quiz
     const startQuiz = async () => {
         if (!sessionCode) return;
         try {
@@ -47,6 +50,7 @@ export default function LobbyScreen() {
         }
     };
 
+    // Allows teacher to remove a student from session
     const bootStudent = async (username: string) => {
         try {
             await deleteDoc(doc(db, "sessions", sessionCode, "students", username));
@@ -56,16 +60,20 @@ export default function LobbyScreen() {
         }
     };
 
+    // Generates groups using grouping algorithm
     const generateGroupsFunction = () => {
         setTimeout(async () => {
             if (!sessionCode || students.length === 0) return;
             try {
+                // Gets session info and data
                 const sessionRef = doc(db, "sessions", sessionCode);
                 const sessionSnapshot = await getDoc(sessionRef);
                 const sessionData = sessionSnapshot.data();
+
                 const groupSize = sessionData?.groupSize ?? 4;
                 const weights = sessionData?.weights;
 
+                // Gets all students and each student's answers
                 const snapshot = await getDocs(
                     collection(db, "sessions", sessionCode, "students")
                 );
@@ -76,16 +84,18 @@ export default function LobbyScreen() {
                 }));
                 const generatedGroups = generateGroups(studentList as any, groupSize, weights);
 
+                // Converts info for Firestore
                 const groupsMap: Record<string, { username: string }[]> = {};
                 generatedGroups.forEach((group, index) => {
                     groupsMap[`group_${index}`] = group;
                 })
 
+                // Moves groups to grouping screen
                 await updateDoc(doc(db, "sessions", sessionCode), {
                     groups: groupsMap,
                     status: "groups"
                 });
-
+                // Navigates teacher screen to groups screen
                 router.replace({
                     pathname: "/(teacher)/groups",
                     params: { pin: sessionCode }

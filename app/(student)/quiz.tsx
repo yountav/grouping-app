@@ -14,6 +14,9 @@ export default function QuizScreen() {
     const [answers, setAnswers] = useState({});
     const question = questions[currentQuestion];
 
+    // Function called when user selects an answer
+    // Updates answer for current questions and moves
+    // forward after questions are answered
     const selectAnswer = async (value: number) => {
         const updatedAnswers = {
             ...answers,
@@ -27,11 +30,13 @@ export default function QuizScreen() {
         else {
             console.log("Quiz finished!", updatedAnswers);
             try {
+                // Saves each answered question to Firestore
                 await updateDoc(doc(db, "sessions", sessionCode, "students", studentName),
                 {
                     finished: true,
                     answers: updatedAnswers
                 });
+                // Navigates to waiting screen after student finishes quiz
                 router.replace({
                     pathname: "/(student)/waiting_screen",
                     params: { pin: sessionCode, username: studentName }
@@ -44,33 +49,14 @@ export default function QuizScreen() {
 
     return (
         <View style={styles.container}>
+            {/* Displays Progress Bar */}
             <View style={styles.progressBar}>
                 <View style={[styles.progressFill, {width: `${((currentQuestion+1)/questions.length)*100}%`}]}/>
             </View>
             <Text style={styles.questionNumber}>Question {currentQuestion + 1} / {questions.length}</Text>
             <Text style={styles.questionText}>{question.text}</Text>
 
-            {/* <View style={styles.answers}>
-                <Pressable style={styles.button} onPress={() => selectAnswer(1)}>
-                    <Text style={styles.buttonText}>Strongly Disagree</Text>
-                </Pressable>
-
-                <Pressable style={styles.button} onPress={() => selectAnswer(2)}>
-                    <Text style={styles.buttonText}>Disagree</Text>
-                </Pressable>
-
-                <Pressable style={styles.button} onPress={() => selectAnswer(3)}>
-                    <Text style={styles.buttonText}>Neither Agree or Disagree</Text>
-                </Pressable>
-
-                <Pressable style={styles.button} onPress={() => selectAnswer(4)}>
-                    <Text style={styles.buttonText}>Agree</Text>
-                </Pressable>
-
-                <Pressable style={styles.button} onPress={() => selectAnswer(5)}>
-                    <Text style={styles.buttonText}>Strongly Agree</Text>
-                </Pressable>
-            </View> */} 
+            {/* Displays Answer Scale from Strongly Disagree to Strongly Agree */}
             <View style={styles.scaleRow}>
                 {[1,2,3,4,5].map(v => (
                     <Pressable key={v} style={styles.scaleButton} onPress={() => selectAnswer(v)}>

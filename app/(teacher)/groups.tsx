@@ -8,21 +8,23 @@ type Student = {
     username: string;
 }
 
+// Displays all groups on teacher's screen
 export default function GroupScreen() {
     const { pin } = useLocalSearchParams();
     const sessionCode = Array.isArray(pin) ? pin[0] : pin;
-    // const studentName = Array.isArray(username) ? username[0] : username;
+    // All groups, each an array of arrays
     const [groups, setGroups] = useState<Student[][]>([]);
 
     useEffect(() => {
         if (!sessionCode) return;
 
+        // Listens to group updates
         const unsub = onSnapshot(
             doc(db, "sessions", sessionCode),
             (snapshot) => {
                 const data = snapshot.data();
                 if (!data?.groups) return;
-                
+                // Converts object into array
                 const groupsMap = data.groups;
                 const groupsArray = Object.keys(groupsMap).sort().map(key => groupsMap[key]);
                 setGroups(groupsArray);
@@ -38,6 +40,7 @@ export default function GroupScreen() {
             {groups.map((group, groupIndex) => (
                 <View key={groupIndex} style={styles.groupBox}>
                     <Text style={styles.group}>Group {groupIndex + 1}</Text>
+                    {/* Displays all students inside each group */}
                     {group.map((student, i) => (
                         <View key={i} style={styles.studentRow}>
                             <View style={styles.studentAvatar}>

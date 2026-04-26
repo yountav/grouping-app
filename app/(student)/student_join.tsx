@@ -11,18 +11,22 @@ export default function JoinScreen()
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
 
+    // Function called when student joins session
     const joinSession = async () => {
+        // Validates that student has entered a username and pin
         if (!username.trim() || !pin.trim())
         {
             setError('Please enter both a name and a pin.')
             return;
         }
         try {
+            // Creates and update student doc information inside session
             await setDoc(doc(db, "sessions", pin, "students", username), {
                 username: username,
                 joinedAt: Date.now(),
                 finished: false
             });
+            // Navigates to waiting screen after joining with pin code and username
             router.replace({
                 pathname: "/(student)/waiting_screen",
                 params: { pin, username }
