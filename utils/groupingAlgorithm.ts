@@ -49,13 +49,26 @@ function compositeScore(scores: Record<string, number>) : number
     }, 0);
 }
 
-export function generateGroups(students: {username: string, answers: Answers}[], groupSize: number) : {username: string} [][]
+export function generateGroups(students: {username: string, answers: Answers}[], groupSize: number, weights?: Record<string, number>) : {username: string} [][]
 {
+    const defaultWeights: Record<string, number> = {
+        leadership: 0.30,
+        skill: 0.30,
+        organization: 0.20,
+        extroversion: 0.10,
+        stress: 0.05,
+        creativity: 0.05
+    };
+    const resolvedWeights = weights ?? defaultWeights;
+
     const numGroups = Math.ceil(students.length / groupSize);
     const scoredStudents: StudentWScores[] = students.map(s => {
         const scores = computeScores(s.answers);
-        return {...s, scores, compositeScore: compositeScore(scores)};
-    })
+        const composite = Object.entries(resolvedWeights).reduce((sum, [trait, w]) => {
+            return sum + (scores[trait] ?? 0) * w;
+        }, 0);
+        return {...s, scores, compositeScore: composite};
+    });
 
     scoredStudents.sort((a, b) => b.compositeScore - a.compositeScore);
     

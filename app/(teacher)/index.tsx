@@ -1,19 +1,52 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
+const TRAITS = [
+    { key: 'leadership', label: 'Leadership' },
+    { key: 'skill', label: 'Skill' },
+    { key: 'organization', label: 'Organization' },
+    { key: 'stress', label: 'Stress Tolerance' },
+    { key: 'extroversion', label: 'Extroversion' },
+    { key: 'creativity', label: 'Creativity' }
+];
+
+const DEFAULT_WEIGHTS: Record<string, number> = {
+    leadership: 30,
+    skill: 30,
+    organization: 20,
+    extroversion: 10,
+    stress: 5,
+    creativity: 5
+};
+
 export default function HomeSceen()
 {
     const [gameCode, setGameCode] = useState(Math.floor(100000 + Math.random() * 900000).toString());
+    const [weights, setWeights] = useState(DEFAULT_WEIGHTS);
+    const total = Object.values(weights).reduce((a,b) => a + b, 0);
+    const updateWeight = (key: string, value: number) => {
+        setWeights(prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
     
     const createSession = async () => {
         try {
+            const normWeights: Record<string, number> = {};
+            for (const key in weights)
+            {
+                normWeights[key] = weights[key] / 100;
+            }
+
             await setDoc(doc(db, "sessions", gameCode), {
                 createdAt: Date.now(),
-                status: "lobby"
+                status: "lobby",
+                weights: normWeights
             });
 
             router.replace({
@@ -26,17 +59,20 @@ export default function HomeSceen()
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.title}>SkillSync</Text>
             <View style={styles.pinCard}>
                 <Text style={styles.pinLabel}>Class Pin</Text>
                 <Text style={styles.pin}>{gameCode}</Text>
             </View>
 
+            <Text style={styles.sectionTitle}>Trait Weights</Text>
+            <Text style={styles.sectionText}>Adjust how much each trait influences grouping algorithm</Text>
+
             <Pressable style={styles.button} onPress={createSession}>
                 <Text style={styles.buttonText}>Start</Text>
             </Pressable>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -46,6 +82,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#110934',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    scrollContent: {
+        flex: 1,
+        backgroundColor: '#110934',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 60,
+        paddingBottom: 40,
+        paddingHorizontal: 16,
+        minHeight: '100%'
     },
     title: {
         color: '#6D4DFF',
@@ -95,4 +141,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Droid Sans'
     },
+    sectionTitle: {
+        color: '#6D4DFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 4
+    },
+    sectionText: {
+        color: '#FCCB1A',
+        fontSize: 14,
+        opacity: 0.7,
+        marginBottom: 16
+    }
 });
