@@ -1,11 +1,19 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Home() {
+    const { booted } = useLocalSearchParams();
     return (
         <View style={styles.container}>
             <Text style={styles.title}>SkillSync</Text>
             <Text style={styles.subtitle}>Smart Student Grouping</Text>
+
+            {booted === "true" && (
+                <View style={styles.bootedLabel}>
+                    <Text style={styles.bootedText}>You have been removed from the session.</Text>
+                </View>
+            )}
+
             <Pressable style={styles.button} onPress={() => router.replace("/(teacher)")}>
                 <Text style={styles.buttonText}>I'm a Teacher</Text>
             </Pressable>
@@ -63,4 +71,19 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Droid Sans'
     },
+    bootedLabel: {
+        backgroundColor: '#4a0f0f',
+        borderWidth: 1,
+        borderColor: '#8b0000',
+        borderRadius: 10,
+        padding: 12,
+        marginBottom: 24,
+        width: '100%'
+    },
+    bootedText: {
+        color: '#ff6b6b',
+        fontSize: 14,
+        textAlign: 'center',
+        fontWeight: '600'
+    }
 });

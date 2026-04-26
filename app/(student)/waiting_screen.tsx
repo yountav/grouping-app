@@ -32,6 +32,13 @@ export default function WaitingScreen() {
         const unsub = onSnapshot(
             doc(db, "sessions", sessionCode, "students", studentName),
             (snapshot) => {
+                if (!snapshot.exists()) {
+                    router.replace({
+                        pathname: "/",
+                        params: { booted: "true" }
+                    });
+                    return;
+                }
                 setIsFinished(snapshot.data()?.finished ?? false);
             }
         );

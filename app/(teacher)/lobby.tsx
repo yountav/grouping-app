@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "../../firebaseConfig";
@@ -44,6 +44,15 @@ export default function LobbyScreen() {
         } catch (error)
         {
             console.log("Error starting quiz", error);
+        }
+    };
+
+    const bootStudent = async (username: string) => {
+        try {
+            await deleteDoc(doc(db, "sessions", sessionCode, "students", username));
+            console.log("Booted: ", username);
+        } catch (error) {
+            console.log("Error booting student: ", error);
         }
     };
 
@@ -101,6 +110,9 @@ export default function LobbyScreen() {
                         <Text style={styles.avatarText}>{student.username.slice(0,2).toUpperCase()}</Text>
                     </View>
                     <Text style={styles.student}>{student.username}</Text>
+                    <Pressable style={styles.bootButton} onPress={() => bootStudent(student.username)}>
+                        <Text style={styles.bootText}>Remove</Text>
+                    </Pressable>
                 </View>
             ))}
 
@@ -189,6 +201,18 @@ const styles = StyleSheet.create({
     buttonDisabled: {
         backgroundColor: '#1a0f4a',
         opacity: 0.6
+    },
+    bootButton: {
+        marginLeft: 'auto',
+        backgroundColor: '#FF4D4D',
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 6
+    },
+    bootText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold'
     },
     text: {
         color: '#FCCB1A',
