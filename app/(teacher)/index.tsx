@@ -59,6 +59,7 @@ export default function HomeSceen()
     };
 
     return (
+        <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text style={styles.title}>SkillSync</Text>
             <View style={styles.pinCard}>
@@ -82,6 +83,15 @@ export default function HomeSceen()
                         <Text style={styles.traitLabel}>{trait.label}</Text>
                         <Text style={styles.traitValue}>{weights[trait.key]}%</Text>
                     </View>
+
+                    <View style={styles.adjustRow}>
+                        <Pressable style={styles.adjustButton} onPress={() => updateWeight(trait.key, Math.max(0, weights[trait.key] - 5))}>
+                            <Text style={styles.adjustText}>-</Text>
+                        </Pressable>
+                        <Pressable style={styles.adjustButton} onPress={() => updateWeight(trait.key, Math.min(100, weights[trait.key] + 5))}>
+                            <Text style={styles.adjustText}>+</Text>
+                        </Pressable>
+                    </View>
                 </View>
             ))}
 
@@ -89,25 +99,20 @@ export default function HomeSceen()
                 <Text style={styles.buttonText}>Start</Text>
             </Pressable>
         </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#110934',
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#110934'
     },
     scrollContent: {
-        flex: 1,
-        backgroundColor: '#110934',
         alignItems: 'center',
-        justifyContent: 'center',
         paddingTop: 60,
         paddingBottom: 40,
-        paddingHorizontal: 16,
-        minHeight: '100%'
+        paddingHorizontal: 16
     },
     title: {
         color: '#6D4DFF',
@@ -209,5 +214,21 @@ const styles = StyleSheet.create({
         color: '#6D4DFF',
         fontSize: 14,
         fontWeight: '700'
+    },
+    adjustRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    adjustButton: {
+        backgroundColor: '#3214B8',
+        padding: 10,
+        borderRadius: 6,
+        width: 60,
+        alignItems: 'center'
+    },
+    adjustText: {
+        color: '#FBCA17',
+        fontSize: 18,
+        fontWeight: 'bold'
     }
 });

@@ -34,21 +34,6 @@ function computeScores(answers: Answers): Record<string, number>
     return scores;
 }
 
-function compositeScore(scores: Record<string, number>) : number
-{
-    const weights: Record<string, number> = {
-        leadership: 0.30,
-        skill: 0.30,
-        organization: 0.20,
-        extroversion: 0.10,
-        stress: 0.05,
-        creativity: 0.05
-    };
-    return Object.entries(weights).reduce((sum, [trait, w]) => {
-        return sum + (scores[trait] ?? 0) * w;
-    }, 0);
-}
-
 export function generateGroups(students: {username: string, answers: Answers}[], groupSize: number, weights?: Record<string, number>) : {username: string} [][]
 {
     const defaultWeights: Record<string, number> = {
