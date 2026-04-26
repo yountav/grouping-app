@@ -70,11 +70,11 @@ export default function HomeSceen()
             </View>
             
             <Text style={styles.sectionTitle}>Group Size</Text>
+            <Text style={styles.groupSize}>{groupSize} students per group</Text>
             <View style={styles.adjustRow}>
                 <Pressable style={styles.adjustButton} onPress={() => setGroupSize(Math.max(1, groupSize - 1))}>
                     <Text style={styles.adjustText}>-</Text>
                 </Pressable>
-                <Text style={styles.groupSize}>{groupSize} students per group</Text>
                 <Pressable style={styles.adjustButton} onPress={() => setGroupSize(groupSize + 1)}>
                     <Text style={styles.adjustText}>+</Text>
                 </Pressable>
@@ -183,7 +183,8 @@ const styles = StyleSheet.create({
         color: '#6D4DFF',
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 4
+        marginBottom: 4,
+        marginTop: 16
     },
     sectionText: {
         color: '#FCCB1A',
@@ -248,6 +249,7 @@ const styles = StyleSheet.create({
         color: '#F7F0D4',
         fontSize: 16,
         fontWeight: '600',
-        textAlign: 'center'
+        textAlign: 'center',
+        marginBottom: 16
     }
 });
