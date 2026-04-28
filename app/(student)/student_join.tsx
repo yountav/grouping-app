@@ -83,12 +83,14 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '80%',
+        backgroundColor: '#1a0f4a',
         borderWidth: 1.5,
-        borderColor: '#3214B8',
+        borderColor: '#2d1a6e',
         borderRadius: 12,
         padding: 14,
-        marginBottom: 10,
-        color: '#6D4DFF'
+        fontSize: 15,
+        marginBottom: 20,
+        color: '#F7F0D4'
     },
     button: {
         backgroundColor: '#3214B8',

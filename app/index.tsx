@@ -1,10 +1,11 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Home() {
     const { booted } = useLocalSearchParams();
     return (
         <View style={styles.container}>
+            <Image source={require('../assets/team_img.png')} style={styles.logo} />
             <Text style={styles.title}>SkillSync</Text>
             <Text style={styles.subtitle}>Smart Student Grouping</Text>
 
@@ -38,11 +39,18 @@ const styles = StyleSheet.create({
         fontSize: 36,
         fontFamily: 'Futura',
         fontWeight: 'bold',
-        marginBottom: 36,
+        marginBottom: 25,
+        marginTop: 10
+    },
+    logo: {
+        width: 200,
+        height: 200,
+        borderRadius: 55,
+        marginBottom: 20
     },
     subtitle: {
         color: '#6D4DFF',
-        fontSize: 20,
+        fontSize: 25,
         letterSpacing: 1.2,
         opacity: 0.6,
         marginBottom: 24
