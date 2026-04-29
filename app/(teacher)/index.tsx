@@ -73,13 +73,16 @@ export default function HomeSceen()
     return (
         <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.title}>SkillSync</Text>
+            <Text style={styles.title}>Setup</Text>
+            <Text style={styles.sectionTitle}>Configure your session</Text>
+
             <View style={styles.pinCard}>
                 <Text style={styles.pinLabel}>Class Pin</Text>
                 <Text style={styles.pin}>{gameCode}</Text>
             </View>
             
             <Text style={styles.sectionTitle}>Group Size</Text>
+            <Text style={styles.sectionText}>How many students per group?</Text>
             <Text style={styles.groupSize}>{groupSize} students per group</Text>
             <View style={styles.adjustRow}>
                 <Pressable style={styles.adjustButton} onPress={() => setGroupSize(Math.max(1, groupSize - 1))}>
@@ -107,10 +110,15 @@ export default function HomeSceen()
                         <Text style={styles.traitValue}>{weights[trait.key]}%</Text>
                     </View>
 
-                    <View style={styles.adjustRow}>
+                    <View style={styles.trackRow}>
                         <Pressable style={styles.adjustButton} onPress={() => updateWeight(trait.key, Math.max(0, weights[trait.key] - 5))}>
                             <Text style={styles.adjustText}>-</Text>
                         </Pressable>
+
+                        <View style={styles.track}>
+                            <View style={[styles.trackFill, { width: `${weights[trait.key]}%`}]}/>
+                        </View>
+
                         <Pressable style={styles.adjustButton} onPress={() => updateWeight(trait.key, Math.min(100, weights[trait.key] + 5))}>
                             <Text style={styles.adjustText}>+</Text>
                         </Pressable>
@@ -139,10 +147,10 @@ const styles = StyleSheet.create({
     },
     title: {
         color: '#6D4DFF',
-        fontSize: 36,
+        fontSize: 40,
         fontFamily: 'Futura',
         fontWeight: 'bold',
-        marginBottom: 36,
+        marginBottom: 20
     },
     text: {
         color: '#FCCB1A',
@@ -164,7 +172,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#2a1860',
-        marginBottom:20
+        marginTop: 20
     },
     pinLabel: {
         color: '#6D4DFF',
@@ -245,9 +253,9 @@ const styles = StyleSheet.create({
     },
     adjustButton: {
         backgroundColor: '#3214B8',
-        padding: 10,
+        padding: 8,
         borderRadius: 6,
-        width: 60,
+        width: 40,
         alignItems: 'center'
     },
     adjustText: {
@@ -261,5 +269,20 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         marginBottom: 16
+    },
+    track: {
+        flex: 1,
+        height: 6,
+        backgroundColor: '#1a0f4a',
+        borderRadius: 3
+    },
+    trackFill: {
+        height: '100%',
+        backgroundColor: '#5B3FE4',
+    },
+    trackRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10
     }
 });
